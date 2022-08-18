@@ -1,7 +1,10 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+
 
   <title>Sign up or sign in</title>
 
@@ -1179,9 +1182,6 @@
     /* endinject */
   </style>
 
-
-  /* add custom styles here */
-
   <style>
     .unified_container .row .panel-default .language-select {
       outline: 0;
@@ -1201,7 +1201,7 @@
     }
 
     .unified_container .row .panel-default .language-select_container {
-      float:right;
+      float: right;
     }
   </style>
 </head>
@@ -1218,7 +1218,7 @@
           <div class="panel-body">
             <div id="language-select_container" class="language-select_container hidden">
               <select id="language-select" class="language-select" title="Change Language">
-                <option value="en">English</option>
+                <option value="en" selected>English</option>
                 <option value="es">Español</option>
                 <option value="ko">한국어</option>
                 <option value="zh-Hans">汉语 (简体)</option>
@@ -1240,56 +1240,69 @@
 </body>
 
 <script>
-const LANGUAGE_DROPDOWN_SELECTOR = "language-select"
-const LANGUAGE_DROPDOWN_CONTAINER_SELECTOR = "language-select_container"
-const LANGUAGE_PARAM = "ui_locales"
+  const LANGUAGE_DROPDOWN_SELECTOR = "language-select"
+  const LANGUAGE_DROPDOWN_CONTAINER_SELECTOR = "language-select_container"
+  const LANGUAGE_PARAM = "ui_locales"
 
 
-const onChangeLanguage = (e) => {
+  const onChangeLanguage = (e) => {
     const url = new URL(location.href)
 
     const currentLocale = url.searchParams.get(LANGUAGE_PARAM)
     const newLocale = e.target.value;
 
     if (currentLocale !== newLocale) {
-        url.searchParams.set(LANGUAGE_PARAM, newLocale)
+      url.searchParams.set(LANGUAGE_PARAM, newLocale)
     }
 
     window.location.replace(url)
-}
+  }
 
-const setupLanguageSelect = () => {
-    
-  // get languageDropdown and languageDropdownContainer
-  const languageDropdown = document.getElementById(LANGUAGE_DROPDOWN_SELECTOR)
-  const languageDropdownContainer = document.getElementById(LANGUAGE_DROPDOWN_CONTAINER_SELECTOR)
-  
+  const setupLanguageSelect = () => {
+
+    // get languageDropdown and languageDropdownContainer
+    const languageDropdown = document.getElementById(LANGUAGE_DROPDOWN_SELECTOR)
+    const languageDropdownContainer = document.getElementById(LANGUAGE_DROPDOWN_CONTAINER_SELECTOR)
+
 
     setInitialLanguage(languageDropdown)
 
     // remove hidden class if exists on language dropdown container
     if (languageDropdownContainer.classList.contains("hidden")) {
-        languageDropdownContainer.classList.remove("hidden")
+      languageDropdownContainer.classList.remove("hidden")
     }
 
     languageDropdown.addEventListener("change", onChangeLanguage)
-}
+  }
 
-const setInitialLanguage = (languageDropdown) => {
+  const setInitialLanguage = (languageDropdown) => {
     const currentLocale =
-        // B2C should set this on the <html> root node
-        document.documentElement.lang ||
-        new URLSearchParams(location.search).get(LANGUAGE_PARAM)
+      // B2C should set this on the <html> root node
+      document.documentElement.lang ||
+      new URLSearchParams(location.search).get(LANGUAGE_PARAM)
 
-    if (currentLocale) languageDropdown.value = currentLocale
-}
+    // check if current locale is in the dropdown
+    const option = languageDropdown.querySelector(`option[value="${currentLocale}"]`)
 
-// on page loaded
-document.addEventListener("DOMContentLoaded", () => {
+    // if current locale is in the dropdown, set it as the selected option
+    if (option) {
+      languageDropdown.value = currentLocale
+    }
+
+    //if (currentLocale) languageDropdown.value = currentLocale
+  }
+
+
+  if (
+    document.readyState === "complete" ||
+    document.readyState === "interactive"
+  ) {
     setupLanguageSelect()
-});
+  } else {
+    document.addEventListener("DOMContentLoaded", setupLanguageSelect, false)
+  }
 
-  </script>
 
+</script>
 
 </html>
